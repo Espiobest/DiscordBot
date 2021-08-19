@@ -41,10 +41,7 @@ cogs = [
     'cogs.levelling',
     'cogs.tags',
     'cogs.logs',
-    # 'cogs.music',
-    'cogs.test',
     'cogs.joke',
-    'cogs.trace',
     'jishaku'
 ]
 
