@@ -162,3 +162,4 @@ class Level(commands.Cog):
 
 def setup(bot: Waifu):
     bot.add_cog(Level(bot))
+

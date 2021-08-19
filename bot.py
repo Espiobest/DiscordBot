@@ -6,7 +6,6 @@ from discord.utils import get
 import discord
 
 from aiohttp import ClientSession
-import asyncpg
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 from datetime import datetime

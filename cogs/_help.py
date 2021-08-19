@@ -148,3 +148,4 @@ class NewHelp(commands.Cog, name="Help Command"):
 
 def setup(bot: Waifu):
     bot.add_cog(NewHelp(bot))
+

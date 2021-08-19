@@ -54,3 +54,4 @@ class Joke(commands.Cog):
 
 def setup(bot: Waifu):
     bot.add_cog(Joke(bot))
+
