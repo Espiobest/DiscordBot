@@ -1,0 +1,3 @@
+/.env
+cogs/music.py
+*.otf
