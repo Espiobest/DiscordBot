@@ -126,10 +126,6 @@ class Waifu(commands.Bot):
 
     async def on_command_error(self, ctx: Context, exception: Exception) -> None:
         await self.wait_until_ready()
-        # cog_errors = ['MyAnimeList']  # class names
-        # if hasattr(ctx.command, 'cog_name'):
-        #     if ctx.command.cog_name in cog_errors:  # ignoring errors if the cog has a local error handler
-        #         return
         error = getattr(exception, 'original', exception)
 
         if hasattr(ctx.command, 'on_error'):
@@ -275,28 +271,6 @@ class Waifu(commands.Bot):
         obj.seek(0)
         file = discord.File(obj, 'image.png')
         return file
-
-    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
-        if payload.guild_id != 743222429437919283:
-            return
-
-        msg_id = payload.message_id
-        roles = self.get_channel(743247134433869854)
-        role_msg_id = 0
-        async for msg in roles.history(limit=None):
-            if msg.author.id == self.user.id:
-                role_msg_id = msg.id
-                break
-
-        if msg_id == role_msg_id:
-            guild_id = payload.guild_id
-            guild = self.get_guild(guild_id)
-            if payload.emoji.name == 'saitamaOK':
-                role = get(guild.roles, name='Knights')
-                if role is not None:
-                    member = guild.get_member(payload.user_id)
-                    if member is not None:
-                        await member.add_roles(role)
 
     @classmethod
     async def setup(cls, **kwargs):
