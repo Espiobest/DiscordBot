@@ -36,7 +36,10 @@ class Moderation(commands.Cog):
                 muted_members = json.loads(muted[0])
             else:
                 muted_members = {}
-            expire_time = expires_at.isoformat()
+            if expires_at:
+                expire_time = expires_at.isoformat()
+            else:
+                expire_time = None
             muted_members[str(member.id)] = expire_time
             muted_members = json.dumps(muted_members)
             await self.bot.con.execute("UPDATE guild_config SET muted_members = $1 WHERE guild_id = $2", muted_members, ctx.guild.id)
@@ -202,7 +205,7 @@ class Moderation(commands.Cog):
 
         try:
             await member.send(embed=self.bot.em(description=msg))
-        except discord.Forbidden:
+        except:
             pass
 
         num = await self.check(ctx.guild)
@@ -237,7 +240,7 @@ class Moderation(commands.Cog):
                     try:
                         await member.send(embed=self.bot.em(description=f"You have been unmuted in {ctx.guild.name}"))
 
-                    except discord.Forbidden:
+                    except:
                         pass
 
                     embed = self.bot.embed(f"*{member} has been unmuted.*", colour=0xff0000, emoji=False)
@@ -288,7 +291,7 @@ class Moderation(commands.Cog):
                     description=f"You were banned in {ctx.guild.name}" + ['.', f" for {reason}."][reason != "None"])
                 )
 
-            except (discord.Forbidden, discord.HTTPException):
+            except:
                 pass
 
             await ctx.guild.ban(user=member, reason=reason, delete_message_days=delete)
@@ -356,7 +359,7 @@ class Moderation(commands.Cog):
                     description=f"You were kicked from {ctx.guild.name}" + ['.', f" for {reason}."][reason != "None"]
                 ))
 
-            except discord.Forbidden:
+            except:
                 pass
 
             await member.kick(reason=reason)
@@ -435,7 +438,7 @@ class Moderation(commands.Cog):
             await self.logs_channel.send(embed=e)
             try:
                 await member.send(embed=self.bot.em(description=f"You were warned in {ctx.guild.name} for {reason}."))
-            except discord.Forbidden:
+            except:
                 pass
         else:
             await ctx.send('You cannot warn yourself')
@@ -482,6 +485,7 @@ class Moderation(commands.Cog):
     @tasks.loop(minutes=1)
     async def check_time(self):
         for guild in self.bot.guilds:
+            muted = None
             try:
                 muted = await self.bot.con.fetchrow("SELECT muted_members FROM guild_config WHERE guild_id = $1", guild.id)
             except Exception as e:
@@ -497,6 +501,8 @@ class Moderation(commands.Cog):
                 muted_dict = json.loads(muted[0])
 
                 for _id, time in muted_dict.items():
+                    if time is None:
+                        continue
                     expires_at = datetime.fromisoformat(time)
 
                     if expires_at < datetime.utcnow():
@@ -536,7 +542,7 @@ class Moderation(commands.Cog):
                         await self.logs_channel.send(embed=e)
                         try:
                             await member.send(embed=self.bot.em(description=f'You have been unmuted in {guild.name}.'))
-                        except discord.Forbidden:
+                        except:
                             pass
 
                 for member in remove:
@@ -544,7 +550,7 @@ class Moderation(commands.Cog):
                 muted_members = json.dumps(muted_dict)
 
                 await self.bot.con.execute("UPDATE guild_config SET muted_members = $1 WHERE guild_id = $2",
-                                       muted_members, guild.id)
+                                            muted_members, guild.id)
             await asyncio.sleep(10)
 
     # @commands.Cog.listener()

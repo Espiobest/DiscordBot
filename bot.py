@@ -19,6 +19,7 @@ from typing import Union
 import traceback
 import logging
 import dotenv
+import json
 import sys
 import io
 import os
@@ -102,6 +103,22 @@ class Waifu(commands.Bot):
             channel = self.get_channel(743222429437919286)
         else:
             return
+
+        muted = None
+        try:
+            muted = await self.con.fetchrow("SELECT muted_members FROM guild_config WHERE guild_id = $1", member.guild.id)
+        except Exception as e:
+            await self.handle_error(e)
+
+        if muted[0]:
+            muted_dict = json.loads(muted[0])
+            if member.id in muted_dict:
+                muted_role_id = (await self.con.fetchrow("SELECT muted_role_id FROM guild_config WHERE guild_id = $1", member.guild.id))[0]
+
+                muted_role = member.guild.get_role(int(muted_role_id))
+
+                await member.add_roles(muted_role)
+
         num = member.guild.member_count
         loop = asyncio.get_running_loop()
         file = await loop.run_in_executor(None, Waifu.make_banner, member, num)
