@@ -38,5 +38,4 @@ six==1.16.0
 sniffio==1.2.0
 urllib3==1.26.6
 wavelink==0.9.10
-yarl==1.6.3
-parsedatetime~=2.6
+yarl==1gitrsedatetime~=2.6
