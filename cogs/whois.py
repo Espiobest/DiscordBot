@@ -21,8 +21,8 @@ class WhoIs(commands.Cog):
         member = member or ctx.author
         
         if isinstance(member, discord.Member):
-            join_date = member.joined_at.strftime('%b %d, %Y at %I:%M %p')
-            create_date = member.created_at.strftime('%b %d, %Y at %I:%M %p')
+            join_date = self.bot.format_time(member.joined_at)
+            create_date = self.bot.format_time(member.created_at)
             role_list = [role.mention for role in member.roles[1:]]
             roles = ' '.join(reversed(role_list))
 
@@ -48,7 +48,7 @@ class WhoIs(commands.Cog):
             await ctx.send(embed=embed)
 
         elif isinstance(member, discord.User):
-            create_date = member.created_at.strftime('%b %d, %Y at %I:%M %p')
+            create_date = self.bot.format_time(member.created_at)
 
             embed = discord.Embed(title=member.display_name, colour=member.color)
             embed.set_author(name=str(member), icon_url=member.avatar_url)

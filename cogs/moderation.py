@@ -391,7 +391,7 @@ class Moderation(commands.Cog):
 
         paginator = commands.Paginator(prefix="", suffix="")
         for record in logs:
-            time = record["time_at"].strftime('%b %d %Y %H:%M:%S')
+            time = self.bot.format_time(record["time_at"],fmt='%b %d %Y %H:%M:%S')
             moderator = self.bot.get_user(int(record["moderator"])) or record["moderator"]
 
             paginator.add_line(f'**Case {record["case_number"]}**')

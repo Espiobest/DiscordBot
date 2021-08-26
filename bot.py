@@ -134,12 +134,35 @@ class Waifu(commands.Bot):
         await self.wait_until_ready()
         if not message.guild:
             return
-        sent_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        sent_at = self.format_time(datetime.now(), fmt="%Y-%m-%d %H:%M:%S")
         log_message = f"{message.guild.name}: #{message.channel}: @{message.author}: {message.clean_content}"
         logger.log(20, log_message)
         if not message.author.bot:
             print(f"[{sent_at}] {log_message}")
         await self.process_commands(message)
+
+    async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+        if payload.guild_id != 743222429437919283:
+            return
+
+        msg_id = payload.message_id
+        roles = self.get_channel(743247134433869854)
+        role_msg_id = 0
+        async for msg in roles.history(limit=None):
+            if msg.author.id == self.user.id:
+                role_msg_id = msg.id
+                break
+
+        if msg_id == role_msg_id:
+            guild_id = payload.guild_id
+            guild = self.get_guild(guild_id)
+            if payload.emoji.name == 'saitamaOK':
+                role = get(guild.roles, name='Knights')
+                if role is not None:
+                    member = guild.get_member(payload.user_id)
+                    if member is not None:
+                        await member.add_roles(role)
+
 
     async def on_command_error(self, ctx: Context, exception: Exception) -> None:
         await self.wait_until_ready()
@@ -184,6 +207,11 @@ class Waifu(commands.Bot):
 
         for page in paginator.pages:
             await error_channel.send(embed=embed_exception(page))
+
+    @staticmethod
+    def format_time(dt: datetime, fmt='%b %d, %Y at %I:%M %p'):
+        """Shortcut to format `datetime` objects"""
+        return dt.strftime(fmt)
 
     @staticmethod
     def em(**attrs) -> discord.Embed:

@@ -1,3 +1,4 @@
+# noinspection PyPackageRequirements
 from discord.ext.commands import Context
 from discord.ext import commands
 import discord

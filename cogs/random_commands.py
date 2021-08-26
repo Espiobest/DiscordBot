@@ -71,7 +71,7 @@ class Random(commands.Cog):
                      Boosts: **{ctx.guild.premium_subscription_count}** (Level {ctx.guild.premium_tier})
                      """
 
-        create_date = ctx.guild.created_at.strftime('%b %d, %Y at %I:%M %p')
+        create_date = self.bot.format_time(ctx.guild.created_at)
 
         embed = discord.Embed(title=f"Server: {ctx.guild.name}")
         embed.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon_url)
