@@ -35,6 +35,33 @@ class Random(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
+    async def banner(self, ctx: Context, *, user: discord.User = None):
+        """Sends a user's banner if available"""
+        user = user or ctx.author
+        URL = "https://cdn.discordapp.com/banners/"
+        banner_id = (await self.bot.http.request(discord.http.Route("GET", "/users/{uid}", uid=user.id)))['banner']
+        if banner_id is None:
+            return await ctx.send(f"{user} does not have a banner.", delete_after=10)
+
+        animated = banner_id.startswith("a_")
+        extension = ".gif" if animated else ".png"
+
+        embed = discord.Embed(timestamp=ctx.message.created_at)
+        embed.set_author(name=str(user), icon_url=user.avatar_url)
+
+        if extension == ".png":
+            png_link = URL + f"{user.id}/{banner_id}.png?size=4096"
+            jpg_link = URL + f"{user.id}/{banner_id}.jpg?size=4096"
+            webp_link = URL + f"{user.id}/{banner_id}.webp?size=4096"
+            embed.add_field(name=f"Banner", value=f"[PNG]({png_link}) | [JPG]({jpg_link}) | [WEBP]({webp_link})")
+        else:
+            gif_link = URL + f"{user.id}/{banner_id}.gif?size=4096"
+            embed.add_field(name=f"Banner", value=f"[GIF]({gif_link})")
+
+        embed.set_image(url=URL + f"{user.id}/{banner_id}{extension}?size=4096""")
+        await ctx.send(embed=embed)
+
+    @commands.command()
     async def count(self, ctx: Context):
         """Sends the number of users in the server"""
         await ctx.send(f'{ctx.guild.name} has {ctx.guild.member_count} members.')
@@ -67,7 +94,7 @@ class Random(commands.Cog):
         other_info = f"""
                      Bots: {len([m for m in ctx.guild.members if m.bot])}
                      Roles: **{len(ctx.guild.roles)}**/ 250
-                     Emojis: **{len(ctx.guild.emojis)}**/ {ctx.guild.emoji_limit}
+                     Emojis: **{len(ctx.guild.emojis)}**/ {ctx.guild.emoji_limit * 2}
                      Boosts: **{ctx.guild.premium_subscription_count}** (Level {ctx.guild.premium_tier})
                      """
 
