@@ -16,10 +16,10 @@ class WhoIs(commands.Cog):
         self.bot = bot
 
     @commands.command(aliases=['info'])
-    async def whois(self, ctx: Context, *, member: Union[discord.User, discord.Member] = None):
+    async def whois(self, ctx: Context, *, member: Union[discord.Member, discord.User] = None):
         """Get information about a user"""
         member = member or ctx.author
-        
+
         if isinstance(member, discord.Member):
             join_date = self.bot.format_time(member.joined_at)
             create_date = self.bot.format_time(member.created_at)
