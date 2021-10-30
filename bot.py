@@ -123,7 +123,7 @@ class Waifu(commands.Bot):
         await channel.send(f'{member.mention} has joined the server!', file=file)
 
         if member.bot and member.guild.id == 743222429437919283:
-            role = get(member.guild.roles, name='Peasants')
+            role = member.guild.get_role(749030905099714680)
             await member.add_roles(role)
 
         if member.guild.id == 743222429437919283:
@@ -142,6 +142,7 @@ class Waifu(commands.Bot):
         await self.process_commands(message)
 
     async def on_raw_reaction_add(self, payload: discord.RawReactionActionEvent):
+
         if payload.guild_id != 743222429437919283:
             return
 
@@ -156,13 +157,12 @@ class Waifu(commands.Bot):
         if msg_id == role_msg_id:
             guild_id = payload.guild_id
             guild = self.get_guild(guild_id)
-            if payload.emoji.name == 'saitamaOK':
-                role = get(guild.roles, name='Knights')
+            if payload.emoji.id == 743450299645296741:
+                role = guild.get_role(743404080008921088)
                 if role is not None:
                     member = guild.get_member(payload.user_id)
                     if member is not None:
                         await member.add_roles(role)
-
 
     async def on_command_error(self, ctx: Context, exception: Exception) -> None:
         await self.wait_until_ready()
@@ -289,17 +289,17 @@ class Waifu(commands.Bot):
 
         im = Image.open(io.BytesIO(response.content)).convert("RGBA")
         im = im.resize((300, 300))
-        bigsize = (im.size[0] * 10, im.size[1] * 10)
-        mask = Image.new('L', bigsize, 0)
+        big_size = (im.size[0] * 10, im.size[1] * 10)
+        mask = Image.new('L', big_size, 0)
         draw = ImageDraw.Draw(mask)
-        draw.ellipse((0, 0) + bigsize, fill=255)
+        draw.ellipse((0, 0) + big_size, fill=255)
         mask = mask.resize(im.size, Image.ANTIALIAS)
         im.putalpha(mask)
 
         output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
         output.putalpha(mask)
-        welc_img = "./pics/banner1.png"
-        background = Image.open(welc_img)
+        welcome_img = "./pics/banner1.png"
+        background = Image.open(welcome_img)
         draws = ImageDraw.Draw(background)
         background.paste(im, (470, 80), im)
 
@@ -336,8 +336,8 @@ if __name__ == "__main__":
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(filename='log/bot.log', encoding='utf-8', mode='w')
     dt_fmt = '%Y-%m-%d %H:%M:%S'
-    fmt = logging.Formatter('[{asctime}] [{levelname:<7}] {name}: {message}', dt_fmt, style='{')
-    handler.setFormatter(fmt)
+    frmt = logging.Formatter('[{asctime}] [{levelname:<7}] {name}: {message}', dt_fmt, style='{')
+    handler.setFormatter(frmt)
     logger.addHandler(handler)
     if sys.platform == "win32":
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
