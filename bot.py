@@ -2,7 +2,6 @@ from discord_components import DiscordComponents
 from discord.embeds import EmptyEmbed
 from discord.ext.commands import *
 from discord.ext import commands
-from discord.utils import get
 import discord
 
 from aiohttp import ClientSession
